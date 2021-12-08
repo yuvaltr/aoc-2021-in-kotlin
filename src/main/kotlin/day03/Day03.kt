@@ -52,8 +52,7 @@ fun main() {
             index += 1
         }
 
-        check(filtered.size == 1)
-        return bitsToInt(stringToBits(filtered[0]))
+        return bitsToInt(stringToBits(filtered.single()))
     }
 
     fun part2(input: List<String>): Int {
