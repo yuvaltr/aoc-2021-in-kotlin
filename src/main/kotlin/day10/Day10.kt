@@ -5,7 +5,7 @@ import readInput
 class Stack {
     private val elements: MutableList<Any> = mutableListOf()
 
-    private fun isEmpty() = elements.isEmpty()
+    fun isEmpty() = elements.isEmpty()
 
     fun size() = elements.size
 
@@ -19,15 +19,27 @@ class Stack {
         return item
     }
 
+    fun popAll(): List<Any> {
+        val ret = elements.asReversed().toList()
+        elements.clear()
+        return ret
+    }
+
     fun peek() : Any? = elements.lastOrNull()
 
     override fun toString(): String = elements.toString()
 }
 
-fun firstIllegalToken(line: String): Char? {
+enum class ParseStatus {
+    EXPRESSION_IS_COMPLETE,
+    FOUND_ILLEGAL_CHARACTER,
+    EXPRESSION_NEEDS_COMPLETION
+}
+
+fun parseScopes(line: String): Pair<ParseStatus, Any?> {
     val stack = Stack()
 
-    val matches = mapOf(
+    val opensScope = mapOf(
         ')' to '(',
         ']' to '[',
         '}' to '{',
@@ -36,38 +48,63 @@ fun firstIllegalToken(line: String): Char? {
     for (c in line.toCharArray()) {
         when (c) {
             '(', '[', '{', '<' -> stack.push(c)
-            ')', ']', '}', '>' -> if (stack.pop() != matches[c]) return c
+            ')', ']', '}', '>' -> if (stack.pop() != opensScope[c]) return Pair(ParseStatus.FOUND_ILLEGAL_CHARACTER, c)
             else -> TODO()
         }
     }
 
-    return null
+    if (stack.isEmpty())
+        return Pair(ParseStatus.EXPRESSION_IS_COMPLETE, null)
+
+    val closesScope = mapOf(
+        '(' to ')',
+        '[' to ']',
+        '{' to '}',
+        '<' to '>'
+    )
+
+    return Pair(ParseStatus.EXPRESSION_NEEDS_COMPLETION, stack.popAll().map{ closesScope[it] })
 }
 
-fun completeTokens(line: String): String? {
-    if (firstIllegalToken(line) != null)
-        return null
-
-    TODO()
-}
 
 fun part1(input: List<String>): Int {
     var sum = 0
     input.forEach { line ->
-        sum += when (firstIllegalToken(line)) {
-            ')' -> 3
-            ']' -> 57
-            '}' -> 1197
-            '>' -> 25137
-            else -> 0
+        val (status, c) = parseScopes(line)
+
+        if (status == ParseStatus.FOUND_ILLEGAL_CHARACTER) {
+            sum += when (c as Char) {
+                ')' -> 3
+                ']' -> 57
+                '}' -> 1197
+                '>' -> 25137
+                else -> TODO()
+            }
         }
     }
     return sum
 }
 
-fun part2(input: List<String>): Int {
+fun part2(input: List<String>): Long {
+    val scores = input.mapNotNull { line ->
+        val (status, closingScopes) = parseScopes(line)
+        if (status == ParseStatus.EXPRESSION_NEEDS_COMPLETION) {
+            (closingScopes as List<Char>).fold(0L) { acc, c ->
+                5 * acc + when (c) {
+                    ')' -> 1
+                    ']' -> 2
+                    '}' -> 3
+                    '>' -> 4
+                    else -> TODO()
+                }
+            }
+        } else
+            null
+    }
 
-    return 1
+    val scoresLong = scores.toLongArray()
+    scoresLong.sort()
+    return scoresLong[scoresLong.lastIndex/2]
 }
 
 fun main() {
