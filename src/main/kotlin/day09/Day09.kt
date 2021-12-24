@@ -1,35 +1,55 @@
 package day09
 
 import readInput
-import java.util.*
+
+typealias Point = Pair<Int, Int>
 
 data class Size(
     val rows: Int,
     val columns: Int
 )
 
+enum class Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+}
+
 class BoolMatrix {
     var values: Array<BooleanArray>? = null
-
-    constructor(size: Int) {
-        values = Array(size) { BooleanArray(size) }
-    }
 
     constructor(size: Size) {
         values = Array(size.rows) { BooleanArray(size.columns) }
     }
 
-    constructor(v: Array<BooleanArray>) {
-        values = v
+    fun size(): Size {
+        return Size(values?.size ?: 0, values?.first()?.size ?: 0)
+    }
+
+    fun at(p: Point, direction: Direction? = null): Boolean? {
+        val location = when (direction) {
+            Direction.UP -> Point(p.first - 1, p.second)
+            Direction.DOWN -> Point(p.first + 1, p.second)
+            Direction.LEFT -> Point(p.first, p.second - 1)
+            Direction.RIGHT -> Point(p.first, p.second + 1)
+            else -> p
+        }
+
+        if (location.first < 0 || size().rows - 1 < location.first
+            || location.second < 0 || size().columns - 1 < location.second)
+            return null
+
+        return values!![location.first][location.second]
+    }
+
+    fun countTrue(): Int {
+        return values!!.fold(0) { acc: Int, booleans: BooleanArray -> acc + booleans.count { it } }
     }
 }
 
 class IntMatrix {
     var values: Array<IntArray>? = null
-
-    constructor(size: Int) {
-        values = Array(size) { IntArray(size) }
-    }
 
     constructor(size: Size) {
         values = Array(size.rows) { IntArray(size.columns) }
@@ -43,46 +63,20 @@ class IntMatrix {
         return Size(values?.size ?: 0, values?.first()?.size ?: 0)
     }
 
-    fun shift(direction: Direction, maskValue: Int): IntMatrix? {
-        val rows = this.values ?: return null
-
-        var rowList = LinkedList(rows.toList())
-
-        when (direction) {
-            Direction.UP -> {
-                Collections.rotate(rowList, -1)
-                rowList[rowList.lastIndex] = IntArray(rowList.first().size) { maskValue }
-            }
-            Direction.DOWN -> {
-                Collections.rotate(rowList, 1)
-                rowList[0] = IntArray(rowList.first().size) { maskValue }
-            }
-            else -> {
-                val a = rowList.map { row ->
-                    val rowAsList: LinkedList<Int> = LinkedList(row.toList())
-                    when (direction) {
-                        Direction.RIGHT -> {
-                            Collections.rotate(rowAsList, -1)
-                            rowAsList[rowAsList.lastIndex] = maskValue
-                        }
-                        Direction.LEFT -> {
-                            Collections.rotate(rowAsList, 1)
-                            rowAsList[0] = maskValue
-                        }
-                        else -> {
-                            throw Exception("Unknown shift direction")
-                        }
-                    }
-                    rowAsList.toIntArray()
-                }
-                rowList = LinkedList(a)
-            }
+    fun at(p: Point, direction: Direction? = null): Int? {
+        val location = when (direction) {
+            Direction.UP -> Point(p.first - 1, p.second)
+            Direction.DOWN -> Point(p.first + 1, p.second)
+            Direction.LEFT -> Point(p.first, p.second - 1)
+            Direction.RIGHT -> Point(p.first, p.second + 1)
+            else -> p
         }
 
-        val shifted = IntMatrix(rowList.toList().toTypedArray())
-        assert(shifted.values?.size == this.values?.size && shifted.values?.first()?.size == this.values?.first()?.size)
+        if (location.first < 0 || size().rows - 1 < location.first
+            || location.second < 0 || size().columns - 1 < location.second)
+            return null
 
-        return shifted
+        return values!![location.first][location.second]
     }
 }
 
@@ -96,46 +90,64 @@ fun List<String>.toIntMatrix(): IntMatrix {
     return IntMatrix(matrix)
 }
 
-enum class Direction {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
-}
 
-//fun findLocalMinima(mat: IntMatrix): BoolMatrix {
-//    val boolMat = BoolMatrix(mat.size())
-//
-//    mat.values?.forEachIndexed { m, ints ->
-//        ints.forEachIndexed { n, value ->
-//            if (shiftedMatrix.all { it!!.values!![m][n] > value  })
-//                count += value + 1
-//        }
-//    }
-//}
 
-fun countLocalMinima(mat: IntMatrix): Int {
-    val shiftedMatrix = Direction.values().toList().map { mat.shift(it, Int.MAX_VALUE) }
+fun findLocalMinimas(mat: IntMatrix): List<Point> {
+    val minimas = mutableListOf<Point>()
 
-    var count = 0
     mat.values?.forEachIndexed { m, ints ->
         ints.forEachIndexed { n, value ->
-            if (shiftedMatrix.all { it!!.values!![m][n] > value  })
-                count += value + 1
+            if (Direction.values().all { (mat.at(Point(m, n), it) ?: Int.MAX_VALUE) > value })
+                minimas.add(Point(m,n))
         }
     }
 
-    return count
+    return minimas
 }
 
+fun findBasinSize(heights: IntMatrix, location: Point): Int {
+    val visited = BoolMatrix(heights.size())
+
+    fun markBasin(p: Point) {
+        if (heights.at(p) == null)
+            return
+
+        // requirement
+        if (heights.at(p) == 9)
+            return
+
+        if (visited.values!![p.first][p.second])
+            return
+
+        // for each 4-adjacent location, this location is in the basin if it is lower than all 4-adjacent non-visited points
+        val inBasin = Direction.values().all { dir ->
+            visited.at(p, dir) != false || (visited.at(p, dir) == false && (heights.at(p, dir) ?: Int.MAX_VALUE) >= (heights.at(p))!!) }
+
+        if (inBasin) {
+            visited.values!![p.first][p.second] = true
+            markBasin(Point(p.first + 1, p.second))
+            markBasin(Point(p.first - 1, p.second))
+            markBasin(Point(p.first, p.second + 1))
+            markBasin(Point(p.first, p.second - 1))
+        }
+    }
+
+    markBasin(location)
+    return visited.countTrue()
+}
 
 fun part1(input: IntMatrix): Int {
-    return countLocalMinima(input)
+    return findLocalMinimas(input).count()
 }
 
 fun part2(input: IntMatrix): Int {
+    val basinSizes = findLocalMinimas(input).map { findBasinSize(input, it) }.toMutableList()
+    require(basinSizes.size >= 3)
 
-    return 1
+    basinSizes.sort()
+    return basinSizes
+        .takeLast(3)
+        .fold(1) { acc, i -> acc * i }
 }
 
 fun main() {
