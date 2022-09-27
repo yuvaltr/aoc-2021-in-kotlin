@@ -34,6 +34,19 @@ data class EnergyLevelState(val input: List<String>) {
         return flashes
     }
 
+    fun untilAllFlash(): Int {
+        val size = levels.size * levels[0].size
+        var prevFlashes = 0
+        while (true) {
+            singleStep()
+            if (flashes - prevFlashes == size) {
+                return step
+            } else {
+                prevFlashes = flashes
+            }
+        }
+    }
+
     private fun executeStep(): Int {
         // increase all levels by 1
         increaseAll(levels)
@@ -110,8 +123,8 @@ fun part1(input: List<String>): Int {
 
 
 fun part2(input: List<String>): Int {
-
-    return 0
+    val state = EnergyLevelState(input)
+    return state.untilAllFlash()
 }
 
 
@@ -119,12 +132,12 @@ fun main() {
     val testInput = readInput("day11/test.txt")
 
     println("test part1 = ${part1(testInput)}")
-    //println("test part2 = ${part2(testInput)}")
+    println("test part2 = ${part2(testInput)}")
 
     val input = readInput("day11/input.txt")
 
     println("part1 = ${part1(input)}")
-    //println("part2 = ${part2(input)}")
+    println("part2 = ${part2(input)}")
 
     return
 }
