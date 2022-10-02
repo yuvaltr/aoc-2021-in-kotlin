@@ -1,44 +1,12 @@
 package day12
 
+import common.DirectedGraph
+import common.toGraph
 import readInput
 
 
-data class Graph(
-    val nodes: LinkedHashMap<String, Int> = linkedMapOf(),
-    val edges: LinkedHashMap<String, MutableList<String>> = linkedMapOf()
-)
-
-fun List<String>.toGraph(): Graph {
-    val graph = Graph()
-
-    this.forEach { line ->
-        val regex = """([A-Z|a-z]+)-([A-Z|a-z]+)""".toRegex()
-        val (first, second) = regex.find(line)!!.destructured.toList()
-
-        graph.nodes[first] = 0
-        graph.nodes[second] = 0
-
-        if (graph.edges.containsKey(first)) {
-            if (!graph.edges[first]!!.contains(second))
-                graph.edges[first]!!.add(second)
-        } else {
-            graph.edges[first] = mutableListOf(second)
-        }
-
-        if (graph.edges.containsKey(second)) {
-            if (!graph.edges[second]!!.contains(first))
-                graph.edges[second]!!.add(first)
-        } else {
-            graph.edges[second] = mutableListOf(first)
-        }
-    }
-
-    return graph
-}
-
-
-fun part1(graph: Graph): Int {
-    fun countPathsToEnd(graph: Graph, source: String, destination: String = "end"): Int {
+fun part1(graph: DirectedGraph): Int {
+    fun countPathsToEnd(graph: DirectedGraph, source: String, destination: String = "end"): Int {
         // assert starting node isn't visited already
         require(graph.nodes[source] == 0)
 
@@ -62,8 +30,8 @@ fun part1(graph: Graph): Int {
     return countPathsToEnd(graph, "start", "end")
 }
 
-fun part2(graph: Graph): Int {
-    fun countPathsToEnd(graph: Graph, partialPath: String, source: String, destination: String = "end"): Int {
+fun part2(graph: DirectedGraph): Int {
+    fun countPathsToEnd(graph: DirectedGraph, partialPath: String, source: String, destination: String = "end"): Int {
         // assert starting node isn't visited twice already
         require(graph.nodes[source]!! < 2)
 
