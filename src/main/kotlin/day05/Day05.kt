@@ -1,9 +1,7 @@
 package day05
 
 import readInput
-import java.lang.Integer.max
-import java.lang.Integer.min
-import java.lang.Math.abs
+import kotlin.math.abs
 
 
 typealias Point = Pair<Int, Int>
@@ -26,21 +24,21 @@ data class Line(
 
     fun getLatticePoints(): List<Point> {
         return if (isHorizontal()) {
-            val a = min(start.first, end.first)
-            val b = max(start.first, end.first)
+            val a = minOf(start.first, end.first)
+            val b = maxOf(start.first, end.first)
             (a..b).map{Point(it, start.second)}
 
         } else if (isVertical()) {
-            val a = min(start.second, end.second)
-            val b = max(start.second, end.second)
+            val a = minOf(start.second, end.second)
+            val b = maxOf(start.second, end.second)
             (a..b).map { Point(start.first, it)}
 
         } else if (isDiagonal()) {
-            val a = min(start.first, end.first)
-            val b = max(start.first, end.first)
+            val a = minOf(start.first, end.first)
+            val b = maxOf(start.first, end.first)
 
-            val c = min(start.second, end.second)
-            val d = max(start.second, end.second)
+            val c = minOf(start.second, end.second)
+            val d = maxOf(start.second, end.second)
 
             val flipped = (start.first == a && start.second == d || start.first == b && start.second == c)
 
@@ -102,8 +100,8 @@ fun main() {
     val testInput = readInput("day05/input.txt")
         .map {
             val coords = regex.find(it)!!.destructured.toList().slice(listOf(1, 4, 7, 10)).map{ s -> s.toInt() }
-            minCoord = min(minCoord, coords.minOrNull()!!)
-            maxCoord = max(maxCoord, coords.maxOrNull()!!)
+            minCoord = minOf(minCoord, coords.minOrNull()!!)
+            maxCoord = maxOf(maxCoord, coords.maxOrNull()!!)
             Line(Point(coords[0], coords[1]), Point(coords[2], coords[3]))
         }
 
