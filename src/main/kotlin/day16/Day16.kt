@@ -5,7 +5,7 @@ import readInput
 data class Packet(
     val version: Int,
     val type: Int,
-    val value: Int? = null,
+    var value: Long? = null,
     val subPackets: List<Packet>
 )
 
@@ -29,9 +29,9 @@ fun String.toDecimal(): Int {
 @JvmInline
 value class Length(val v: Int)
 
-fun String.toLiteralValue(): Pair<Int, Length> {
+fun String.toLiteralValue(): Pair<Long, Length> {
     var i = 0
-    var value = 0
+    var value = 0L
     do {
         val fiver = this.substring(5 * i, 5 * (i + 1))
         value = value * 16 + fiver.substring(1).toDecimal()
@@ -76,9 +76,12 @@ fun readPacket(it: String): Pair<Packet, Length> {
                 }
             }
             else -> {
-                TODO()
+                throw NotImplementedError()
             }
         }
+
+        // A non-literal-value packet always has sub-packets (i.e. leaf packets are literal values)
+        check(subPackets.size > 0)
 
         return Pair(Packet(version, type, null, subPackets), Length(startIndex))
     }
@@ -88,6 +91,58 @@ fun sumOfVersions(packet: Packet): Int {
     var verSum = packet.version
     verSum += packet.subPackets.sumOf { sumOfVersions(it) }
     return verSum
+}
+
+fun evaluate(packet: Packet): Long {
+    packet.subPackets.forEach {
+        if (it.value == null) {
+            it.value = evaluate(it)
+        }
+    }
+
+    packet.value = when (packet.type) {
+        0 -> {
+            packet.subPackets.sumOf { it.value!! }
+        }
+        1 -> {
+            packet.subPackets.fold(1) { acc, it -> it.value!! * acc!! }
+        }
+        2 -> {
+            packet.subPackets.minOf { it.value!! }
+        }
+        3 -> {
+            packet.subPackets.maxOf { it.value!! }
+        }
+        4 -> {
+            packet.value!!
+        }
+        5 -> {
+            check(packet.subPackets.size == 2)
+            if (packet.subPackets.first().value!! > packet.subPackets.last().value!!)
+                1
+            else
+                0
+        }
+        6 -> {
+            check(packet.subPackets.size == 2)
+            if (packet.subPackets.first().value!! < packet.subPackets.last().value!!)
+                1
+            else
+                0
+        }
+        7 -> {
+            check(packet.subPackets.size == 2)
+            if (packet.subPackets.first().value!! == packet.subPackets.last().value!!)
+                1
+            else
+                0
+        }
+        else -> {
+            throw NotImplementedError()
+        }
+    }
+
+    return packet.value!!
 }
 
 fun part1(input: List<String>): Int {
@@ -102,9 +157,15 @@ fun part1(input: List<String>): Int {
     return 0
 }
 
-
 fun part2(input: List<String>): Int {
+    input.forEach {
+        val binary = it.hexToBinary()
+        val (packet, _) = readPacket(binary)
+        val eval = evaluate(packet)
+        val shortPacket = if (it.length > 20) "${it.take(17)}..." else it
 
+        println("packet $shortPacket has value = $eval")
+    }
     return 0
 }
 
@@ -117,7 +178,7 @@ fun main() {
     val input = readInput("day16/input.txt")
 
     println("part1 = ${part1(input)}")
-    //println("part2 = ${part2(input)}")
+    println("part2 = ${part2(input)}")
 
     return
 }
