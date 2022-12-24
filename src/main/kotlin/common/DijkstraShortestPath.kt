@@ -1,11 +1,11 @@
 package common
 
 typealias Coord = Pair<Int, Int>
-typealias IntMat = Array<IntArray>
+typealias SimpleIntMat = Array<IntArray>
 
 class DijkstraShortestPath {
 
-    fun get(weights: IntMat, start: Coord, end: Coord): Int {
+    fun get(weights: SimpleIntMat, start: Coord, end: Coord): Int {
         // Dijkstra's
 
         // set all nodes as "unvisited"

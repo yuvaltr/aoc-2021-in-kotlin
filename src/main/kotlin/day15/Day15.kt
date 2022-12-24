@@ -2,9 +2,9 @@ package day15
 
 import readInput
 import common.DijkstraShortestPath
-import common.IntMat
+import common.SimpleIntMat
 
-fun readMatrix(input: List<String>): IntMat {
+fun readMatrix(input: List<String>): SimpleIntMat {
     return input
         .map {  line ->
             line.toCharArray().map { (it - '0') }.toIntArray()
