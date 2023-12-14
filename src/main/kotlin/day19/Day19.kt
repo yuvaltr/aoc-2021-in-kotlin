@@ -35,6 +35,7 @@ fun readDetectionCoordinates(lines: List<String>): List<List<Coord>> {
 
 fun rotate(coord: Coord, rotateTo: Coord, rotateBy: Int): Coord {
 
+    return Coord(0, 0, 0)
 }
 
 /// coordinates in 3D can be taken relative to 6 axial directions, each rotated along its axis in 4 ways
@@ -45,7 +46,7 @@ fun getRotations(scans: List<Coord>): List<List<Coord>> {
 }
 
 fun isOverlapping(rotation: List<Coord>, overlapped: List<Coord>): Boolean {
-
+    return true
 }
 
 fun findOverlaps(coordinates: List<List<Coord>>): List<List<Coord>> {
