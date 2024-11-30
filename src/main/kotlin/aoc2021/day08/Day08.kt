@@ -1,4 +1,4 @@
-package day08
+package aoc2021.day08
 
 import readInput
 
@@ -123,7 +123,7 @@ fun part2(input: List<String>): Int {
 
 fun main() {
 
-    val testInput = readInput("day08/test.txt")
+    val testInput = readInput("aoc2021/day08/test.txt")
 
     println("part1 = ${part1(testInput)}")
     println("part2 = ${part2(testInput)}")

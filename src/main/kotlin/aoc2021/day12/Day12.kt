@@ -1,4 +1,4 @@
-package day12
+package aoc2021.day12
 
 import common.DirectedGraph
 import common.toGraph
@@ -64,12 +64,12 @@ fun part2(graph: DirectedGraph): Int {
 }
 
 fun main() {
-    val testInput = readInput("day12/test.txt").toGraph()
+    val testInput = readInput("aoc2021/day12/test.txt").toGraph()
 
     println("test part1 = ${part1(testInput)}")
     println("test part2 = ${part2(testInput)}")
 
-    val input = readInput("day12/input.txt").toGraph()
+    val input = readInput("aoc2021/day12/input.txt").toGraph()
 
     println("part1 = ${part1(input)}")
     println("part2 = ${part2(input)}")

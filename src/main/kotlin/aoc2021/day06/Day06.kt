@@ -1,4 +1,4 @@
-package day06
+package aoc2021.day06
 
 import readInput
 import java.util.*
@@ -35,7 +35,7 @@ fun part2(input: List<Int>, days: Int): Long {
 
 fun main() {
 
-    val testInput = readInput("day06/input.txt").first().split(",").map { it.toInt() }
+    val testInput = readInput("aoc2021/day06/input.txt").first().split(",").map { it.toInt() }
 
     println("part1 = ${part1(testInput, days = 80)}")
     println("part2 = ${part2(testInput, days = 256)}")

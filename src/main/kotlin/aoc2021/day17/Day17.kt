@@ -1,4 +1,4 @@
-package day17
+package aoc2021.day17
 
 import common.Coord
 import kotlin.math.abs

@@ -1,4 +1,4 @@
-package day03
+package aoc2021.day03
 
 import readInput
 import kotlin.math.pow
@@ -62,7 +62,7 @@ fun main() {
         return oxygen * co2
     }
 
-    val testInput = readInput("day03/input.txt")
+    val testInput = readInput("aoc2021/day03/input.txt")
     check(testInput.size == 1000)
 
     println("part1 = ${part1(testInput)}")

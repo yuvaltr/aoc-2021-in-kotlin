@@ -1,4 +1,4 @@
-package day09
+package aoc2021.day09
 
 import readInput
 
@@ -151,12 +151,12 @@ fun part2(input: IntMatrix): Int {
 }
 
 fun main() {
-    val testInput = readInput("day09/test.txt").toIntMatrix()
+    val testInput = readInput("aoc2021/day09/test.txt").toIntMatrix()
 
     println("test part1 = ${part1(testInput)}")
     println("test part2 = ${part2(testInput)}")
 
-    val input = readInput("day09/input.txt").toIntMatrix()
+    val input = readInput("aoc2021/day09/input.txt").toIntMatrix()
 
     println("part1 = ${part1(input)}")
     println("part2 = ${part2(input)}")

@@ -1,4 +1,4 @@
-package day14
+package aoc2021.day14
 
 import readInput
 
@@ -110,14 +110,14 @@ fun followInstructionsV2(input: List<String>): Long {
 }
 
 fun main() {
-    val testInput = readInput("day14/test.txt")
+    val testInput = readInput("aoc2021/day14/test.txt")
 
     println("test part1 = ${followInstructions(testInput)}")
     println("test part1 V2 = ${followInstructionsV2(testInput)}")
 
     println("test part2 = ${followInstructionsV2(testInput)}")
 
-    val input = readInput("day14/input.txt")
+    val input = readInput("aoc2021/day14/input.txt")
 
     println("part1 = ${followInstructionsV2(input)}")
     println("part2 = ${followInstructionsV2(input)}")

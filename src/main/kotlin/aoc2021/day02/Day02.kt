@@ -1,4 +1,4 @@
-package day02
+package aoc2021.day02
 
 import readInput
 
@@ -39,7 +39,7 @@ fun main() {
     }
 
 
-    val testInput = readInput("day02/Day02_test.txt")
+    val testInput = readInput("aoc2021/day02/Day02_test.txt")
         .map { it.split(' ') }
         .map { Operation(it[0], it[1].toInt()) }
 

@@ -1,4 +1,4 @@
-package day07
+package aoc2021.day07
 
 import readInput
 import java.lang.Math.abs
@@ -39,7 +39,7 @@ fun part2(displacements: List<Int>): Int {
 
 fun main() {
 
-    val testInput = readInput("day07/input.txt").first().split(",").map { it.toInt() }
+    val testInput = readInput("aoc2021/day07/input.txt").first().split(",").map { it.toInt() }
 
     println("part1 = ${part1(testInput)}")
     println("part2 = ${part2(testInput)}")

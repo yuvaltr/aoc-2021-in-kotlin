@@ -1,4 +1,4 @@
-package day04
+package aoc2021.day04
 
 import readInput
 
@@ -74,7 +74,7 @@ fun main() {
         return 0
     }
 
-    val testInput = readInput("day04/input.txt")
+    val testInput = readInput("aoc2021/day04/input.txt")
 
     val guessed: List<Int> = testInput[0].split(',').map { it.toInt() }
     val boards = testInput.drop(2).windowed(size = 5, step = 6).map { BingoBoard(it) }

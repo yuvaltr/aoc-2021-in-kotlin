@@ -1,4 +1,4 @@
-package day01
+package aoc2021.day01
 
 import readInput
 
@@ -16,7 +16,7 @@ fun main() {
     }
 
 
-    val testInput = readInput("day01/Day01_test.txt")
+    val testInput = readInput("aoc2021/day01/Day01_test.txt")
         .map { it.toInt() }
 
     check(testInput.size == 2000)

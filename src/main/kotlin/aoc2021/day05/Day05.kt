@@ -1,4 +1,4 @@
-package day05
+package aoc2021.day05
 
 import readInput
 import kotlin.math.abs
@@ -97,7 +97,7 @@ fun main() {
     var minCoord = Int.MAX_VALUE
     var maxCoord = Int.MIN_VALUE
 
-    val testInput = readInput("day05/input.txt")
+    val testInput = readInput("aoc2021/day05/input.txt")
         .map {
             val coords = regex.find(it)!!.destructured.toList().slice(listOf(1, 4, 7, 10)).map{ s -> s.toInt() }
             minCoord = minOf(minCoord, coords.minOrNull()!!)
